@@ -1,28 +1,46 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
-  </div>
+  <v-app>
+    <v-main>
+      <v-row class="top panel-group">
+        <v-col class="lg-3 panel"><Navigation mapId="max-map" v-bind:zoomLevel="9.5" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 8.967762, lat: 48.679740 }"/></v-col>
+        <v-col class="lg-3 panel"><Navigation mapId="alex-map" v-bind:zoomLevel="10.75" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 9.448506, lat: 48.651287 }"/></v-col>
+        <v-col class="lg-3 panel"><FuelList v-bind:place="{ lon: 9.387584, lat: 48.720639 }" v-bind:radius="10" fuelType="e5" /></v-col>
+      </v-row>
+      <v-row class="bottom panel-group">
+        <v-col class="lg-3 panel"></v-col>
+        <v-col class="lg-3 panel"></v-col>
+        <v-col class="lg-3 panel"></v-col>
+      </v-row>
+    </v-main>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Navigation from "./components/Navigation";
+import FuelList from "./components/FuelList";
 
 export default {
   name: 'App',
+
   components: {
-    HelloWorld
-  }
-}
+    Navigation,
+    FuelList
+  },
+};
 </script>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
+<style scoped lang="scss">
+.top {
+  background: red;
+  height: 50%;
+}
+
+.bottom {
+  background: blue;
+  height: 50%;
+}
+
+.panel-group {
+  padding: 0 10px;
 }
 </style>
