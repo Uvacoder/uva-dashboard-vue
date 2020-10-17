@@ -29,37 +29,9 @@ export default {
             zoom: that.zoomLevel
         });
         map.on("load", function() {
-            that.$http.get(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${that.start.lon},${that.start.lat};${that.destination.lon},${that.destination.lat}?geometries=geojson&access_token=${process.env.VUE_APP_MAPBOX_API_TOKEN}`).then(response => {
-                const geoJson = response.data.routes[0].geometry.coordinates;
-                that.duration = response.data.routes[0].duration / 60;
-                that.distance = response.data.routes[0].distance / 1000;
-                console.log(response.data.routes);
-                map.addSource('route', {
-                    'type': 'geojson',
-                    'data': {
-                        'type': 'Feature',
-                        'properties': {},
-                        'geometry': {
-                            'type': 'LineString',
-                            'coordinates': geoJson
-                        }
-                    }
-                });
-
-                map.addLayer({
-                    'id': 'route',
-                    'type': 'line',
-                    'source': 'route',
-                    'layout': {
-                        'line-join': 'round',
-                        'line-cap': 'round'
-                    },
-                    'paint': {
-                        'line-color': '#888',
-                        'line-width': 8
-                    }
-                });
-            });
+            let requestInterval = this.requestInterval || 600000;
+            that.getRoute(map);
+            setInterval(that.getRoute.bind(that, map), requestInterval);
         });
     },
     data() {
@@ -73,7 +45,8 @@ export default {
         start: Object,
         destination: Object,
         mapId: String,
-        zoomLevel: Number
+        zoomLevel: Number,
+        requestInterval: Number,
     },
     methods: {
         /**
@@ -92,6 +65,42 @@ export default {
             let lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + bX) * (Math.cos(lat1) + bX) + bY * bY));
             let lng3 = lng1 + Math.atan2(bY, Math.cos(lat1) + bX);
             return [lng3 * (180 / Math.PI), lat3 * (180 / Math.PI)];
+        },
+        getRoute(map) {
+                console.log("Navigation: request", new Date());
+                let that = this;
+                that.$http.get(`https://api.mapbox.com/directions/v5/mapbox/driving-traffic/${that.start.lon},${that.start.lat};${that.destination.lon},${that.destination.lat}?geometries=geojson&access_token=${process.env.VUE_APP_MAPBOX_API_TOKEN}`).then(response => {
+                    const geoJson = response.data.routes[0].geometry.coordinates;
+                    that.duration = response.data.routes[0].duration / 60;
+                    that.distance = response.data.routes[0].distance / 1000;
+                    map.getLayer("route") && map.removeLayer("route");
+                    map.getSource("route") && map.removeSource("route");
+                    map.addSource('route', {
+                        'type': 'geojson',
+                        'data': {
+                            'type': 'Feature',
+                            'properties': {},
+                            'geometry': {
+                                'type': 'LineString',
+                                'coordinates': geoJson
+                            }
+                        }
+                    });
+
+                    map.addLayer({
+                        'id': 'route',
+                        'type': 'line',
+                        'source': 'route',
+                        'layout': {
+                            'line-join': 'round',
+                            'line-cap': 'round'
+                        },
+                        'paint': {
+                            'line-color': '#888',
+                            'line-width': 8
+                        }
+                    });
+                });
         }
     },
 }
@@ -101,11 +110,11 @@ export default {
 @import url("https://api.mapbox.com/mapbox-gl-js/v1.10.1/mapbox-gl.css");
 
 .wrapper {
-    height: 100%;
+    height: 50vh;
 }
 
 
 .basemap {
-    height: 85%;
+    height: 80%;
 }
 </style>

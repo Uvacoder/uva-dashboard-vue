@@ -10,7 +10,7 @@
       </v-row>
       <v-row class="bottom panel-group">
         <v-col class="lg-3 panel"><Weather v-bind:place="{ lon: 9.387584, lat: 48.720639 }" /></v-col>
-        <v-col class="lg-3 panel"></v-col>
+        <v-col class="lg-3 panel"><APIImage /></v-col>
         <v-col class="lg-3 panel"></v-col>
       </v-row>
     </v-main>
@@ -21,6 +21,7 @@
 import Navigation from "./components/Navigation";
 import FuelList from "./components/FuelList";
 import Weather from "./components/Weather";
+import APIImage from "./components/Image";
 
 export default {
   name: 'App',
@@ -28,7 +29,8 @@ export default {
   components: {
     Navigation,
     FuelList,
-    Weather
+    Weather,
+    APIImage
   },
 };
 </script>
@@ -40,10 +42,15 @@ body {
   overflow: hidden;
 }
 
+.panel {
+  height: 50vh;
+}
+
 .background {
   width: 100vw;
   height: 100vh;
   background: #3E1E68 !important;
+  overflow: hidden;
 }
 
 $particleSize: 20vmin;
@@ -85,11 +92,11 @@ $amount: 20;
   }
 }
 .top {
-  height: 50%;
+  height: 50vh;
 }
 
 .bottom {
-  height: 50%;
+  height: 50vh;
 }
 
 .panel-group {

@@ -23,11 +23,9 @@
 <script>
 export default {
     mounted () {
-        let sortBy = this.sortBy || "dist";
-        let maxStations = this.maxStations || 8;
-        this.$http.get(`https://creativecommons.tankerkoenig.de/json/list.php?lat=${this.place.lat}&lng=${this.place.lon}&rad=${this.radius}&sort=price&type=${this.fuelType}&apikey=${process.env.VUE_APP_TANKKOENIG_API_TOKEN}`).then(response => {
-            this.fuelList = this.sortFuelList(this.filterFuelList(response.data.stations), sortBy).slice(0, maxStations);
-        });
+        let requestInterval = this.requestInterval || 600000;
+        this.getFuelList();
+        setInterval(this.getFuelList, requestInterval);
     },
     data() {
         return {
@@ -39,7 +37,8 @@ export default {
         radius: Number,
         fuelType: String,
         sortBy: String,
-        maxStations: Number
+        maxStations: Number,
+        requestInterval: Number,
     },
     methods: {
         sortFuelList(fuelList, sortBy) {
@@ -52,7 +51,15 @@ export default {
 
         filterFuelList(fuelList) {
             return fuelList.filter((station) => station.isOpen)
-        } 
+        },
+        getFuelList() {
+            console.log("Fuellist: request", new Date());
+            let sortBy = this.sortBy || "dist";
+            let maxStations = this.maxStations || 8;
+            this.$http.get(`https://creativecommons.tankerkoenig.de/json/list.php?lat=${this.place.lat}&lng=${this.place.lon}&rad=${this.radius}&sort=price&type=${this.fuelType}&apikey=${process.env.VUE_APP_TANKKOENIG_API_TOKEN}`).then(response => {
+                this.fuelList = this.sortFuelList(this.filterFuelList(response.data.stations), sortBy).slice(0, maxStations);
+            });
+        }
     }
 }
 </script>
