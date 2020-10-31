@@ -11,26 +11,28 @@
       <v-row class="bottom panel-group">
         <v-col class="lg-3 panel"><Weather v-bind:place="{ lon: 9.387584, lat: 48.720639 }" /></v-col>
         <v-col class="lg-3 panel"><APIImage /></v-col>
-        <v-col class="lg-3 panel"></v-col>
+        <v-col class="lg-3 panel"><!--<List v-bind:showInput="true" />--></v-col>
       </v-row>
     </v-main>
   </v-app>
 </template>
 
 <script>
-import Navigation from "./components/Navigation";
-import FuelList from "./components/FuelList";
-import Weather from "./components/Weather";
-import APIImage from "./components/Image";
+// import Navigation from "./components/Navigation";
+// import FuelList from "./components/FuelList";
+// import Weather from "./components/Weather";
+// import APIImage from "./components/Image";
+import List from "./components/List";
 
 export default {
   name: 'App',
 
   components: {
-    Navigation,
-    FuelList,
-    Weather,
-    APIImage
+    //Navigation,
+    //FuelList,
+    //Weather,
+    //APIImage,
+    List,
   },
 };
 </script>
