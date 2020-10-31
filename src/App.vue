@@ -18,21 +18,21 @@
 </template>
 
 <script>
-// import Navigation from "./components/Navigation";
-// import FuelList from "./components/FuelList";
-// import Weather from "./components/Weather";
-// import APIImage from "./components/Image";
-import List from "./components/List";
+import Navigation from "./components/Navigation";
+import FuelList from "./components/FuelList";
+import Weather from "./components/Weather";
+import APIImage from "./components/Image";
+// import List from "./components/List";
 
 export default {
   name: 'App',
 
   components: {
-    //Navigation,
-    //FuelList,
-    //Weather,
-    //APIImage,
-    List,
+    Navigation,
+    FuelList,
+    Weather,
+    APIImage,
+    // List,
   },
 };
 </script>
