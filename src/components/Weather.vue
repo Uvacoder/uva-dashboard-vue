@@ -90,9 +90,9 @@ export default {
                 this.humidity = current.humidity;
                 this.pressure = current.pressure;
                 let sunrise = new Date(current.sunrise * 1000);
-                this.sunrise = `${sunrise.getHours()}:${sunrise.getMinutes()}`; 
+                this.sunrise = `${sunrise.getHours()}:${sunrise.getMinutes() > 9 ? sunrise.getMinutes() : "0" +  sunrise.getMinutes()}`; 
                 let sunset = new Date(current.sunset * 1000);
-                this.sunset = `${sunset.getHours()}:${sunset.getMinutes()}`; 
+                this.sunset = `${sunset.getHours()}:${sunset.getMinutes() > 9 ? sunset.getMinutes() : "0" + sunset.getMinutes()}`; 
                 this.windSpeed = current.wind_speed;
             });
         }
