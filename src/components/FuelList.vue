@@ -21,11 +21,18 @@
 </template>
 
 <script>
+const activeCheckerHelper = require("../helpers/activeChecker");
+
 export default {
     mounted () {
         let requestInterval = this.requestInterval || 600000;
         this.getFuelList();
-        setInterval(this.getFuelList, requestInterval);
+        setInterval(() => {
+            if (!activeCheckerHelper.checkIfActive()) {
+                return;
+            }
+            this.getFuelList();
+        }, requestInterval);
     },
     data() {
         return {

@@ -6,11 +6,18 @@
 </template>
 
 <script>
+const activeCheckerHelper = require("../helpers/activeChecker");
+
 export default {
     mounted: function() {
         let requestInterval = this.requestInterval || 60000;
         this.getImage();
-        setInterval(this.getImage, requestInterval);
+        setInterval(() => {
+            if (!activeCheckerHelper.checkIfActive()) {
+                return;
+            }
+            this.getImage();
+        }, requestInterval);
     },
     data() {
         return {
@@ -23,7 +30,7 @@ export default {
     },
     methods: {
         getImage() {
-            console.log("Image: request", new Date())
+            console.log("Image: request", new Date());
             let that = this;
             that.$http.get("https://randomfox.ca/floof/").then(response => {
                 that.image = response.data.image;

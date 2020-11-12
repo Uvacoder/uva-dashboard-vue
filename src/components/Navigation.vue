@@ -15,6 +15,7 @@
 
 <script>
 import mapboxgl from "mapbox-gl";
+const activeCheckerHelper = require("../helpers/activeChecker");
 
 export default {
     mounted () {
@@ -31,7 +32,12 @@ export default {
         map.on("load", function() {
             let requestInterval = this.requestInterval || 600000;
             that.getRoute(map);
-            setInterval(that.getRoute.bind(that, map), requestInterval);
+            setInterval(() => { 
+                if (!activeCheckerHelper.checkIfActive()) {
+                    return;
+                }
+                that.getRoute(map);
+            }, requestInterval);
         });
     },
     data() {

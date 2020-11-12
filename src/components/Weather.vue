@@ -39,11 +39,18 @@
     </div>
 </template>
 <script>
+const activeCheckerHelper = require("../helpers/activeChecker");
+
 export default {
     mounted: function() {
         let requestInterval = this.requestInterval || 3600000;
         this.getWeather();
-        setInterval(this.getWeather, requestInterval);
+        setInterval(() => {
+            if (!activeCheckerHelper.checkIfActive()) {
+                return;
+            }
+            this.getWeather() 
+        }, requestInterval);
     },
     props: {
         place: Object,

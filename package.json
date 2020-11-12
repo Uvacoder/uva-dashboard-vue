@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
+    "dateformat": "^3.0.3",
     "dotenv": "^8.2.0",
     "mapbox-gl": "^1.12.0",
     "vue": "^2.6.11",
