@@ -6,11 +6,12 @@
       <v-row class="top panel-group">
         <v-col class="lg-3 panel"><Clock targetDate="2020-12-24" targetText="Tage bis Heiligabend" differenceIn="days" /></v-col>
         <v-col class="lg-3 panel"><Navigation mapId="alex-map" v-bind:zoomLevel="10.75" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 9.448506, lat: 48.651287 }"/></v-col>
-        <v-col class="lg-3 panel"><Navigation mapId="max-map" v-bind:zoomLevel="9.5" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 8.967762, lat: 48.679740 }"/></v-col>
+        <v-col class="lg-3 panel"><etf-list :isins="['IE00BJ0KDQ92', 'LU1737652583']" /></v-col>
+        <!--<v-col class="lg-3 panel"><Navigation mapId="max-map" v-bind:zoomLevel="9.5" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 8.967762, lat: 48.679740 }"/></v-col>-->
       </v-row>
       <v-row class="bottom panel-group">
         <v-col class="lg-3 panel"><Weather v-bind:place="{ lon: 9.387584, lat: 48.720639 }" /></v-col>
-        <v-col class="lg-3 panel"><APIImage />--></v-col>
+        <v-col class="lg-3 panel"><APIImage /></v-col>
         <v-col class="lg-3 panel"><FuelList v-bind:place="{ lon: 9.387584, lat: 48.720639 }" v-bind:radius="10" fuelType="e5" /></v-col>
       </v-row>
     </v-main>
@@ -24,6 +25,7 @@ import Weather from "./components/Weather";
 import APIImage from "./components/Image";
 // import List from "./components/List";
 import Clock from "./components/Clock"
+import EtfList from './components/EtfList'
 
 export default {
   name: 'App',
@@ -34,7 +36,8 @@ export default {
     Weather,
     APIImage,
     // List,
-    Clock
+    Clock,
+    EtfList
   },
 };
 </script>
