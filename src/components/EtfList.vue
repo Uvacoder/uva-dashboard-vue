@@ -14,7 +14,10 @@
                     <td>{{ etf.isin }}</td>
                     <td>{{ etf.name }}</td>
                     <td>{{ etf.price }}</td>
-                    <td>{{ etf.previousPrice !== false ? ((etf.price / etf.previousPrice) - 1) * 100 : 0 }}</td>
+                    <td :class="{ 'green--text': priceDiff(etf.price, etf.previousPrice) >= 0, 'red--text': priceDiff(etf.price, etf.previousPrice) < 0 }">
+                        {{ priceDiff(etf.price, etf.previousPrice) }}
+                        {{ priceDiff(etf.price, etf.previousPrice) >= 0 ? '&#129045;' : '&#129047;' }}
+                    </td>
                 </tr>
             </tbody>
         </v-simple-table>
@@ -39,6 +42,11 @@ export default {
             priceList: []
         }
     },
+    computed: {
+        priceDiff () {
+            return (price, previousPrice) => (previousPrice !== false ? (((price / previousPrice)) * 100) - 100 : 0).toFixed(2)
+        }
+    },
     methods: {
         fetchData () {
             if (this.isins.length < 1) {
@@ -46,16 +54,24 @@ export default {
             }
 
             this.isins.forEach(isin => {
-                fetch('http://localhost:3000/isin?isin=' + isin).then(
+                fetch('http://localhost:3000/etf?isin=' + isin).then(
                     async (res) => {
                         const responseJson = await res.json()
                         this.priceList.push(responseJson)
                     }
                 )
             })
-
-            console.log(this.priceList)
         }
     }
 }
 </script>
+
+<style lang="scss" scoped>
+.green {
+    color: green;
+}
+
+.red {
+    color: red;
+}
+</style>
