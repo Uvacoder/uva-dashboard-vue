@@ -6,17 +6,17 @@
                     <th class="text-left">ISIN</th>
                     <th class="text-left">Name</th>
                     <th class="text-left">Price</th>
-                    <th class="text-left">Development</th>
+                    <th class="text-left">Development (%)</th>
                 </tr>
             </thead>
             <tbody>
-                <tr v-for="etf in this.priceList" :key="etf.isin">
-                    <td>{{ etf.isin }}</td>
-                    <td>{{ etf.name }}</td>
-                    <td>{{ etf.price }}</td>
-                    <td :class="{ 'green--text': priceDiff(etf.price, etf.previousPrice) >= 0, 'red--text': priceDiff(etf.price, etf.previousPrice) < 0 }">
-                        {{ priceDiff(etf.price, etf.previousPrice) }}
-                        {{ priceDiff(etf.price, etf.previousPrice) >= 0 ? '&#129045;' : '&#129047;' }}
+                <tr v-for="share in this.priceList" :key="share.isin">
+                    <td>{{ share.isin || '-'}}</td>
+                    <td>{{ share.name }}</td>
+                    <td>{{ share.price }} {{ share.toCurrency ? `(${share.toCurrency})` : '(EUR)' }}</td>
+                    <td :class="{ 'green--text': priceDiff(share.price, share.previousPrice) >= 0, 'red--text': priceDiff(share.price, share.previousPrice) < 0 }">
+                        {{ priceDiff(share.price, share.previousPrice) }}
+                        {{ priceDiff(share.price, share.previousPrice) >= 0 ? '&#129045;' : '&#129047;' }}
                     </td>
                 </tr>
             </tbody>
@@ -31,6 +31,12 @@ export default {
     },
     props: {
         isins: {
+            type: Array,
+            default () {
+                return []
+            }
+        },
+        coins: {
             type: Array,
             default () {
                 return []
@@ -55,6 +61,15 @@ export default {
 
             this.isins.forEach(isin => {
                 fetch('http://localhost:3000/etf?isin=' + isin).then(
+                    async (res) => {
+                        const responseJson = await res.json()
+                        this.priceList.push(responseJson)
+                    }
+                )
+            })
+
+            this.coins.forEach(name => {
+                fetch('http://localhost:3000/crypto?name=' + name).then(
                     async (res) => {
                         const responseJson = await res.json()
                         this.priceList.push(responseJson)
