@@ -66,6 +66,8 @@ export default {
     methods: {
         fetchData () {
             console.log("SharesList: request", new Date());
+
+            this.priceList = []
             if (this.isins.length < 1) {
                 return
             }
