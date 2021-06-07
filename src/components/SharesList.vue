@@ -25,9 +25,18 @@
 </template>
 
 <script>
+const activeCheckerHelper = require("../helpers/activeChecker");
+
 export default {
     mounted () {
+        let requestInterval = this.requestInterval || 600000;
         this.fetchData()
+        setInterval(() => { 
+            if (!activeCheckerHelper.checkIfActive()) {
+                return;
+            }
+            this.fetchData()
+        }, requestInterval);
     },
     props: {
         isins: {
@@ -41,7 +50,8 @@ export default {
             default () {
                 return []
             }
-        }
+        },
+        requestInterval: Number,
     },
     data () {
         return {
@@ -55,6 +65,7 @@ export default {
     },
     methods: {
         fetchData () {
+            console.log("SharesList: request", new Date());
             if (this.isins.length < 1) {
                 return
             }
