@@ -6,21 +6,24 @@ This is an open source home dashboard you can use to display informations as:
 - Images and animal facts
 - Route navigation data (with traffic)
 - Weather in your area
+- Open Pull Requests for a certain GitHub repo
 
-The dashboard (as of now) can hold 6 dashlets in a 3 by 2 setup. Fell free to help developing new dashlets, or help improving things as setup, general functionality and configurations.
+The dashboard (as of now) can hold 6 dashlets in a 3 by 2 setup. Fell free to help developing new dashlets, or help improving things as setup, general functionality and configurations. You may also decide to span a dashlet over both rows, at the moment a placeholder in the respective other row is needed though, to align the other dashlets correctly in horizontal direction.
+TODO: A setup of the dashboard via a config object would be way better. At the moment, the dashboard has to be set up in the App.vue.
 
 To setup the dashboard you will probably need at least some understanding of programming (Developers, feel free to improve the setup!), but the guide below will try to explain it as good as possible.
 
 ## Setup for Your home dashboard
 ### Decide which dashlets you want
 You can find all available dashlets in the components directory. Each dashlet can be configured. The configuration of each dashlet will be explained at the head of each file (TODO! As of now find out for yourself :P Just take a look at the names of a components properties, should be self explanatory, mostly).
-To include a dashlet into you dashboard, go to the App.vue file. There you can find 2 \<v-row> tags and 6 \<v-col> tags. Each \<v-col> tag will hold a dashlet. Include as dashlet as already shown in the file. After restarting your application, you will find the dashlet on the webpage.
+To include a dashlet into you dashboard, go to the App.vue file. There you can find 2 \<v-row> tags and 6 \<v-col> tags. Each \<v-col> tag will hold a dashlet. Include as dashlet as already shown in the file. After restarting your application, you will find the dashlet on the webpage. Use the classes panel--h-1 and panel--h-2 to decide how high the dashlet should be (1 or 2 rows). If using 2 rows height, add a simple \<v-col> with height 1 to the other row in the same column.
 
 ### Adding API keys
 You will need API keys for some dashlets. All APIs used in this project are either free, free to some extent or the keys need to be request via mail from the providers. You can configure the API tokens in the .env file. For the current dashlets take a look at these sites:
 - Navigation: You will need a MapBox API key. Take a look here: https://docs.mapbox.com/help/how-mapbox-works/access-tokens/. MapBox will give you 100000 request free a months!
 - FuelList: For Germans, you can request a Tankkoenig API token here: https://creativecommons.tankerkoenig.de/
-- Weather: You will need an Open Weather API token. Take a look here: https://openweathermap.org/appid. This token will be free if used correctly.
+- Weather: You will need an Open Weather API token. Take a look here: https://openweathermap.org/appid. This token will be free if used correctly. For reverse Geocoding, use a mapbox access token.
+- GitHubPRList: You need a GitHub personal access token with the 'repo' and the 'read:project' rights. These can be created in the GitHub Developer Settings. Take a look here: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token
 
 ### Additional configuration
 #### Active times
@@ -31,15 +34,16 @@ Note that there is implementation needed in a component to make this work. So no
 ## Developing on the dashboard
 ### Developing a dashlet
 Take a look at the already developed dashlets. A dashlet is considered a component and should be completely isolated from other components.
-If you think the project or you dashlets would benefit from shared components, feel free to create a pull request for it!
+If you think the project or your dashlets would benefit from shared components, feel free to create a pull request for it!
 #### Making your dashlet obey the configured active times
 There is a module in src/helpers named activeChecker.js. As of now it contains one function: checkIfActive(). This function will check if the current hour is inside one of the configured timespans and will return true if yes, and false if not.
 Your component most likey contains an interval, where you request data from an API or just refresh component data. I think the best way to make the component obey the active rule is to check for the checkIfActive() functions result and cancel the interval execution, if false is returned.
+TODO: I could imagine that the "requesting code" can be extracted from the components into a shared class, because at the moment the almost same code is implemented in every single component.
 
 #### Development Roadmap (feel free to contribute)
 - An **interactive shopping list component**, where users can add items to and remove items from. This should be done from another route of the webpage or via an app. The dashlet itself should not display any input components
 - Better setup: Make **components and properties configurable via a config file**. As of now users have to adjust actual code to configure their dashboard
-- **Common way to obay active times**: At the moment active times are checked via checking the helper function and canceling requests, if it returned false. There should be a way to let the component obey these rules automatically (if a property is set)
+- **Common way to obey active times**: At the moment active times are checked via checking the helper function and canceling requests, if it returned false. There should be a way to let the component obey these rules automatically (if a property is set)
 - Open for any ideas!
 
 ## Project setup

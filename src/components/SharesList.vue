@@ -27,6 +27,9 @@
 <script>
 const activeCheckerHelper = require("../helpers/activeChecker");
 
+/**
+ * SharesList component needs the scraper API running in the background: https://github.com/MaxGeldner/ETFScraperAPI
+ */
 export default {
     mounted () {
         let requestInterval = this.requestInterval || 600000;

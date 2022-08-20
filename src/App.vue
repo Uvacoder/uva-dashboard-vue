@@ -4,15 +4,16 @@
     <span v-for="n in 20" v-bind:key="n"></span>
     <v-main>
       <v-row class="top panel-group">
-        <v-col class="lg-3 panel"><Clock targetDate="2020-12-24" targetText="Tage bis Heiligabend" differenceIn="days" /></v-col>
-        <v-col class="lg-3 panel"><Navigation mapId="alex-map" v-bind:zoomLevel="10.75" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 9.448506, lat: 48.651287 }"/></v-col>
-        <v-col class="lg-3 panel"><Shares-list :isins="['IE00BJ0KDQ92', 'LU1737652583']" :coins="['BTC', 'DOGE']" /></v-col>
-        <!--<v-col class="lg-3 panel"><Navigation mapId="max-map" v-bind:zoomLevel="9.5" v-bind:start="{ lon: 9.387584, lat: 48.720639 }" v-bind:destination="{ lon: 8.967762, lat: 48.679740 }"/></v-col>-->
+        <!--<v-col class="lg-3 panel--h-2"><GitHubPRList :user="''" :repos="[]" /></v-col>-->
+        <v-col class="lg-3 panel--h-1"><Clock targetDate="2020-12-24" targetText="Tage bis Heiligabend" differenceIn="days" /></v-col>
+        <v-col class="lg-3 panel--h-1"><Shares-list :isins="['IE00BJ0KDQ92', 'LU1737652583']" :coins="['BTC', 'DOGE']" /></v-col>
+        <v-col class="lg-3 panel--h-1"><Navigation mapId="max-map" v-bind:zoomLevel="9.5" v-bind:start="{ lon: 9.540422646422513, lat: 48.61532224676564 }" v-bind:destination="{ lon: 9.289805202699322, lat: 48.742102645103 }"/></v-col>
       </v-row>
       <v-row class="bottom panel-group">
-        <v-col class="lg-3 panel"><Weather v-bind:place="{ lon: 9.387584, lat: 48.720639 }" /></v-col>
-        <v-col class="lg-3 panel"><APIImage /></v-col>
-        <v-col class="lg-3 panel"><FuelList v-bind:place="{ lon: 9.387584, lat: 48.720639 }" v-bind:radius="10" fuelType="e5" /></v-col>
+        <!--<v-col class="lg-3 panel--h-1">--><!-- if using panel--h-2 in top row, you may need to insert a placeholder for the second row --><!--</v-col>-->
+        <v-col class="lg-3 panel--h-1"><Weather :place="{ lon: 9.289805202699322, lat: 48.742102645103 }" /></v-col>
+        <v-col class="lg-3 panel--h-1"><FuelList :place="{ lon: 9.289805202699322, lat: 48.742102645103 }" v-bind:radius="10" fuelType="e5" /></v-col>
+        <v-col class="lg-3 panel--h-1"><APIImage /></v-col>
       </v-row>
     </v-main>
   </v-app>
@@ -26,6 +27,7 @@ import APIImage from "./components/Image";
 // import List from "./components/List";
 import Clock from "./components/Clock"
 import SharesList from './components/SharesList'
+// import GitHubPRList from './components/GitHubPRList.vue'
 
 export default {
   name: 'App',
@@ -37,20 +39,33 @@ export default {
     APIImage,
     // List,
     Clock,
-    SharesList
+    SharesList,
+    // GitHubPRList
   },
 };
 </script>
 
-<!-- background credits go to: https://1stwebdesigner.com/15-css-background-effects/ -->
-<style scoped lang="scss">
+<style>
+html {
+  overflow-y: hidden !important;
+}
+
 body {
   margin: 0;
+  overflow-y: hidden !important;
+}
+</style>
+
+<!-- background credits go to: https://1stwebdesigner.com/15-css-background-effects/ -->
+<style scoped lang="scss">
+.panel--h-1 {
+  height: 50vh;
   overflow: hidden;
 }
 
-.panel {
-  height: 50vh;
+.panel--h-2 {
+  height: 100vh;
+  overflow: hidden;
 }
 
 .background {

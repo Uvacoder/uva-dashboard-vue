@@ -3,7 +3,7 @@
         <v-container class="wrapper">
             <v-row class="weather current">
                 <v-col class="lg-6 basic">
-                    <div class="hour"><small>{{this.currentHour}} Uhr</small></div>
+                    <div class="hour"><small>{{this.currentHour}} Uhr {{this.placeName && `in ${this.placeName}`}}</small></div>
                     <div class="temp">{{this.currentTemp}}°C</div>
                     <div class="cover"><b>{{this.description}}</b></div>
                 </v-col>
@@ -44,12 +44,14 @@ const activeCheckerHelper = require("../helpers/activeChecker");
 export default {
     mounted: function() {
         let requestInterval = this.requestInterval || 3600000;
+        this.getPlaceName();
         this.getWeather();
         setInterval(() => {
             if (!activeCheckerHelper.checkIfActive()) {
                 return;
             }
-            this.getWeather() 
+            this.getPlaceName();
+            this.getWeather();
         }, requestInterval);
     },
     props: {
@@ -70,6 +72,7 @@ export default {
             windSpeed: 0,
             description: "",
             forecasts: [],
+            placeName: ""
         }
     },
     methods: {
@@ -79,6 +82,12 @@ export default {
             let slicedHourly = forecast.slice(0, newForecastLength);
             // Start at the next hour. Then get in given interval.
             return slicedHourly.filter((element, index) => index % hourInterval === hourInterval - 1);
+        },
+        getPlaceName() {
+            const that = this;
+            that.$http.get(`https://api.mapbox.com/geocoding/v5/mapbox.places/${that.place.lon},${that.place.lat}.json?access_token=${process.env.VUE_APP_MAPBOX_API_TOKEN}`).then(response => {
+                that.placeName = response.data.features.filter(f => f.place_type.includes('place'))[0].text;
+            });
         },
         getWeather() {
             console.log("Weather: request", new Date());
