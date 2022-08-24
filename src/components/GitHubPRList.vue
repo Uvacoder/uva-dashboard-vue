@@ -64,21 +64,44 @@ export default {
         }
     },
     methods: {
+
+        async fetchToGithub(link) {
+            return await fetch(link, {
+                'headers': {
+                    'authorization': `token ${process.env.VUE_APP_GITHUB_AUTH_TOKEN}`,
+                },
+                'method': 'GET',
+            }).then(resp => resp.json());
+        },
+
         getPRs() {
             console.log("GitHub PR List: request", new Date());
-            let that = this;
+            this.repos.forEach(async (repo) => {
+                const pullRequests = await this.fetchToGithub(`https://api.github.com/repos/${this.user}/${repo}/pulls?state=${this.state}`);
+                for (const pullRequest of pullRequests) {
+                    const pullRequestReviews = await this.fetchToGithub(pullRequest._links.self.href + '/reviews');
+                    pullRequestReviews.reverse();
 
-            this.repos.forEach(repo => {
-                that.$http.get(`https://api.github.com/repos/${that.user}/${repo}/pulls?state=${that.state}`, {
-                    headers: {
-                        Authorization: `token ${process.env.VUE_APP_GITHUB_AUTH_TOKEN}`
+                    for (const { state } of pullRequestReviews) {
+                        if (state === 'APPROVED') {
+                            pullRequest.review_state = state;
+                            break;
+                        }
+                        if (state === 'CHANGES_REQUESTED') {
+                            pullRequest.review_state = state;
+                            break;
+                        }
+                        if (state === 'COMMENTED') {
+                            pullRequest.review_state = state;
+                            break;
+                        }
                     }
-                }).then(response => {
-                    if (!that.prs[repo]) {
-                        that.$set(that.prs, repo, [])
-                    }
-                    that.$set(that.prs, repo, response.data)
-                });
+                    pullRequest.review_state = pullRequest.review_state ?? 'OPEN';
+                }
+                if (!this.prs[repo]) {
+                    this.$set(this.prs, repo, [])
+                }
+                this.$set(this.prs, repo, pullRequests)
             })
         }
     }
