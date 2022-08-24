@@ -14,7 +14,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="pr in prs[repo]" :key="pr.id">
+                        <tr v-for="pr in prs[repo]" :key="pr.id" :class="pr.review_state">
                             <td>{{ pr.title }}</td>
                             <td>{{ pr.requested_reviewers.map(e => e.login).join(', ') }}</td>
                             <td>{{ Math.round((new Date() - new Date(pr.created_at)) / (1000 * 60 * 60 * 24)) }} Tagen</td>
@@ -112,6 +112,20 @@ export default {
 .repos-list {
     .repo-container {
         margin-bottom: 25px;
+
+        .CHANGES_REQUESTED {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .COMMENTED {
+            background-color: rgba(0, 0, 255, 0.5);
+        }
+
+        .APPROVED {
+            background-color: rgba(0, 255, 0, 0.5);
+        }
+
+
     }
     .no-prs-container {
         text-align: center;
