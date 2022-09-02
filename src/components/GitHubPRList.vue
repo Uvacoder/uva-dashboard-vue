@@ -14,7 +14,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr v-for="pr in prs[repo]" :key="pr.id">
+                        <tr v-for="pr in prs[repo]" :key="pr.id" :class="pr.review_state">
                             <td>{{ pr.title }}</td>
                             <td>{{ pr.requested_reviewers.map(e => e.login).join(', ') }}</td>
                             <td>{{ Math.round((new Date() - new Date(pr.created_at)) / (1000 * 60 * 60 * 24)) }} Tagen</td>
@@ -64,21 +64,33 @@ export default {
         }
     },
     methods: {
+
+        async fetchToGithub(link) {
+            return await fetch(link, {
+                'headers': {
+                    'authorization': `token ${process.env.VUE_APP_GITHUB_AUTH_TOKEN}`,
+                },
+                'method': 'GET',
+            }).then(resp => resp.json());
+        },
+
         getPRs() {
             console.log("GitHub PR List: request", new Date());
-            let that = this;
+            this.repos.forEach(async (repo) => {
+                const pullRequests = await this.fetchToGithub(`https://api.github.com/repos/${this.user}/${repo}/pulls?state=${this.state}`);
+                for (const pullRequest of pullRequests) {
+                    const pullRequestReviews = await this.fetchToGithub(pullRequest._links.self.href + '/reviews');
+                    const pullRequestReviewsWithKnownStates = pullRequestReviews.filter(({ state }) => ['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED'].includes(state));
 
-            this.repos.forEach(repo => {
-                that.$http.get(`https://api.github.com/repos/${that.user}/${repo}/pulls?state=${that.state}`, {
-                    headers: {
-                        Authorization: `token ${process.env.VUE_APP_GITHUB_AUTH_TOKEN}`
+                    pullRequest.review_state = 'OPEN';
+                    if (pullRequestReviewsWithKnownStates.length > 0) {
+                        pullRequest.review_state = pullRequestReviewsWithKnownStates.pop().state;
                     }
-                }).then(response => {
-                    if (!that.prs[repo]) {
-                        that.$set(that.prs, repo, [])
-                    }
-                    that.$set(that.prs, repo, response.data)
-                });
+                }
+                if (!this.prs[repo]) {
+                    this.$set(this.prs, repo, [])
+                }
+                this.$set(this.prs, repo, pullRequests)
             })
         }
     }
@@ -89,6 +101,19 @@ export default {
 .repos-list {
     .repo-container {
         margin-bottom: 25px;
+
+        .CHANGES_REQUESTED {
+            background-color: rgba(255, 0, 0, 0.5);
+        }
+
+        .COMMENTED {
+            background-color: rgba(0, 0, 255, 0.5);
+        }
+
+        .APPROVED {
+            background-color: rgba(0, 255, 0, 0.5);
+        }
+
     }
     .no-prs-container {
         text-align: center;
