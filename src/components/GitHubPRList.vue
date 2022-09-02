@@ -80,11 +80,11 @@ export default {
                 const pullRequests = await this.fetchToGithub(`https://api.github.com/repos/${this.user}/${repo}/pulls?state=${this.state}`);
                 for (const pullRequest of pullRequests) {
                     const pullRequestReviews = await this.fetchToGithub(pullRequest._links.self.href + '/reviews');
-                    const pullRequestReviewsWithKnownStates = pullRequestReviews.filter(({ review_state }) => ['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED'].includes(review_state));
+                    const pullRequestReviewsWithKnownStates = pullRequestReviews.filter(({ state }) => ['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED'].includes(state));
 
                     pullRequest.review_state = 'OPEN';
                     if (pullRequestReviewsWithKnownStates.length > 0) {
-                        pullRequest.review_state = pullRequestReviewsWithKnownStates.pop();
+                        pullRequest.review_state = pullRequestReviewsWithKnownStates.pop().state;
                     }
                 }
                 if (!this.prs[repo]) {
