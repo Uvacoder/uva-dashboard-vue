@@ -80,23 +80,12 @@ export default {
                 const pullRequests = await this.fetchToGithub(`https://api.github.com/repos/${this.user}/${repo}/pulls?state=${this.state}`);
                 for (const pullRequest of pullRequests) {
                     const pullRequestReviews = await this.fetchToGithub(pullRequest._links.self.href + '/reviews');
-                    pullRequestReviews.reverse();
+                    const pullRequestReviewsWithKnownStates = pullRequestReviews.filter(({ review_state }) => ['APPROVED', 'CHANGES_REQUESTED', 'COMMENTED'].includes(review_state));
 
-                    for (const { state } of pullRequestReviews) {
-                        if (state === 'APPROVED') {
-                            pullRequest.review_state = state;
-                            break;
-                        }
-                        if (state === 'CHANGES_REQUESTED') {
-                            pullRequest.review_state = state;
-                            break;
-                        }
-                        if (state === 'COMMENTED') {
-                            pullRequest.review_state = state;
-                            break;
-                        }
+                    pullRequest.review_state = 'OPEN';
+                    if (pullRequestReviewsWithKnownStates.length > 0) {
+                        pullRequest.review_state = pullRequestReviewsWithKnownStates.pop();
                     }
-                    pullRequest.review_state = pullRequest.review_state ?? 'OPEN';
                 }
                 if (!this.prs[repo]) {
                     this.$set(this.prs, repo, [])
@@ -124,7 +113,6 @@ export default {
         .APPROVED {
             background-color: rgba(0, 255, 0, 0.5);
         }
-
 
     }
     .no-prs-container {
